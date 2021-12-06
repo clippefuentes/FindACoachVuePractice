@@ -1,37 +1,39 @@
 <template>
-  <base-dialog :show="!!error" @close="handleError">
-    <p>{{ error }}</p>
-  </base-dialog>
-  <section>
-    <coach-filter @change-filter="setFilters"></coach-filter>
-  </section>
-  <section>
-    <base-card>
-      <div class="controls">
-        <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
-        <base-button v-if="!isCoach" link to="/register"> Register as Coach </base-button>
-      </div>
-      <div v-if="isLoading">
-        <base-loader> </base-loader>
-      </div>
-      <ul v-if="hasCoaches">
-        <li v-for="coach in filteredCoaches" :key="coach.id">
-          <!-- <router-link :to="'/coaches/' + coach.id"> -->
-          <coach-item
-            :key="coach.id"
-            :id="coach.id"
-            :first-name="coach.firstName"
-            :last-name="coach.lastName"
-            :rate="coach.hourlyRate"
-            :areas="coach.areas"
-          >
-          </coach-item>
-          <!-- </router-link> -->
-        </li>
-      </ul>
-      <h3 v-else>No coaches found</h3>
-    </base-card>
-  </section>
+  <div>
+    <base-dialog :show="!!error" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <section>
+      <coach-filter @change-filter="setFilters"></coach-filter>
+    </section>
+    <section>
+      <base-card>
+        <div class="controls">
+          <base-button mode="outline" @click="loadCoaches(true)">Refresh</base-button>
+          <base-button v-if="!isCoach" link to="/register"> Register as Coach </base-button>
+        </div>
+        <div v-if="isLoading">
+          <base-loader> </base-loader>
+        </div>
+        <ul v-if="hasCoaches">
+          <li v-for="coach in filteredCoaches" :key="coach.id">
+            <!-- <router-link :to="'/coaches/' + coach.id"> -->
+            <coach-item
+              :key="coach.id"
+              :id="coach.id"
+              :first-name="coach.firstName"
+              :last-name="coach.lastName"
+              :rate="coach.hourlyRate"
+              :areas="coach.areas"
+            >
+            </coach-item>
+            <!-- </router-link> -->
+          </li>
+        </ul>
+        <h3 v-else>No coaches found</h3>
+      </base-card>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -83,10 +85,10 @@ export default {
     setFilters(newFilters) {
       this.activeFilters = newFilters;
     },
-    async loadCoaches() {
+    async loadCoaches(refresh = false) { 
       try {
         this.isLoading = true;
-        await this.$store.dispatch('coaches/loadCoaches');
+        await this.$store.dispatch('coaches/loadCoaches', { forceRefresh: refresh });
         this.isLoading = false;
       } catch (error) {
         this.error = error.message || 'Something went wrong';
