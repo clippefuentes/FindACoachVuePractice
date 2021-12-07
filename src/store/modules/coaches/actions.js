@@ -9,7 +9,8 @@ export default {
       hourlyRate: data.rate,
       areas: data.areas,
     };
-    const response = await fetch(`https://vue-test-project-3674b-default-rtdb.firebaseio.com/coaches/${userId}.json`, {
+    const token = context.rootGetters.token;
+    const response = await fetch(`${process.env.VUE_APP_DB_URL}/coaches/${userId}.json?auth=${token}`, {
       method: 'PUT',
       body: JSON.stringify(coachData),
     });
@@ -27,7 +28,7 @@ export default {
     if (!payload.forceRefresh && !context.getters.shouldUpdate) {
       return;
     }
-    const response = await fetch(`https://vue-test-project-3674b-default-rtdb.firebaseio.com/coaches.json`)
+    const response = await fetch(`${process.env.VUE_APP_DB_URL}/coaches.json`)
     const responseData = await response.json();
     if (!response.ok) {
       const error = new Error(responseData.message || 'Error loading coaches');
@@ -47,7 +48,6 @@ export default {
       }
       coaches.push(coach);
     }
-
     context.commit('setCoaches', coaches);
     context.commit('setFetchTimestamp')
   },

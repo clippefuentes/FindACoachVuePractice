@@ -5,7 +5,7 @@ export default {
       message: payload.message,
     };
     console.log('newRequest', newRequest)
-    const response = await fetch(`https://vue-test-project-3674b-default-rtdb.firebaseio.com/requests/${payload.coachId}.json`, {
+    const response = await fetch(`${process.env.VUE_APP_DB_URL}/requests/${payload.coachId}.json`, {
       method: 'POST',
       body: JSON.stringify(newRequest),
     });
@@ -24,7 +24,8 @@ export default {
   },
   async fetchRequests(context) {
     const coachId = context.rootGetters.userId;
-    const response = await fetch(`https://vue-test-project-3674b-default-rtdb.firebaseio.com/requests/${coachId}.json`)
+    const token = context.rootGetters.token;
+    const response = await fetch(`${process.env.VUE_APP_DB_URL}/requests/${coachId}.json?auth=${token}`);
     const responseData = await response.json();
     if (!response.ok) {
       const error = new Error(responseData.message || 'Something went wrong!');
